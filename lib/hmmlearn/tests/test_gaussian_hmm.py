@@ -32,6 +32,7 @@ class GaussianHMMTestMixin(object):
             h.covars_ = []
             h.startprob_ = self.startprob
             h.transmat_ = self.transmat
+            h._sanitize_parameters()
             h._check_parameters()
 
     def test_score_samples_and_decode(self):

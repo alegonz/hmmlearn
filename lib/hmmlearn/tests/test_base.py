@@ -172,27 +172,35 @@ def test_base_hmm_attributes():
     assert h.n_components == n_components
 
     h.startprob_ = startprob
+    h.transmat_ = transmat
     assert np.allclose(h.startprob_, startprob)
 
     with pytest.raises(ValueError):
         h.startprob_ = 2 * startprob
+        h._sanitize_parameters()
         h._check_parameters()
     with pytest.raises(ValueError):
         h.startprob_ = []
+        h._sanitize_parameters()
         h._check_parameters()
     with pytest.raises(ValueError):
         h.startprob_ = np.zeros((n_components - 2, 2))
+        h._sanitize_parameters()
         h._check_parameters()
 
     h.startprob_ = startprob
     h.transmat_ = transmat
     assert np.allclose(h.transmat_, transmat)
+
     with pytest.raises(ValueError):
         h.transmat_ = 2 * transmat
+        h._sanitize_parameters()
         h._check_parameters()
     with pytest.raises(ValueError):
         h.transmat_ = []
+        h._sanitize_parameters()
         h._check_parameters()
     with pytest.raises(ValueError):
         h.transmat_ = np.zeros((n_components - 2, n_components))
+        h._sanitize_parameters()
         h._check_parameters()

@@ -167,11 +167,13 @@ class GaussianHMM(_BaseHMM):
     def covars_(self, covars):
         self._covars_ = np.asarray(covars).copy()
 
-    def _check_parameters(self):
-        super(GaussianHMM, self)._check_parameters()
-
+    def _sanitize_parameters(self):
+        super(GaussianHMM, self)._sanitize_parameters()
         self.means_ = np.asarray(self.means_)
         self.n_features = self.means_.shape[1]
+
+    def _check_parameters(self):
+        super(GaussianHMM, self)._check_parameters()
 
         if self.covariance_type not in COVARIANCE_TYPES:
             raise ValueError('covariance_type must be one of {0}'
@@ -397,16 +399,17 @@ class MultinomialHMM(_BaseHMM):
                 .rand(self.n_components, self.n_features)
             normalize(self.emissionprob_, axis=1)
 
+    def _sanitize_parameters(self):
+        super(MultinomialHMM, self)._sanitize_parameters()
+        self.emissionprob_ = np.atleast_2d(self.emissionprob_)
+        self.n_features = getattr(self, "n_features", self.emissionprob_.shape[1])
+
     def _check_parameters(self):
         super(MultinomialHMM, self)._check_parameters()
 
-        self.emissionprob_ = np.atleast_2d(self.emissionprob_)
-        n_features = getattr(self, "n_features", self.emissionprob_.shape[1])
-        if self.emissionprob_.shape != (self.n_components, n_features):
+        if self.emissionprob_.shape != (self.n_components, self.n_features):
             raise ValueError(
                 "emissionprob_ must have shape (n_components, n_features)")
-        else:
-            self.n_features = n_features
 
     def _compute_log_likelihood(self, X):
         return np.log(self.emissionprob_)[:, np.concatenate(X)].T
@@ -698,21 +701,24 @@ class GMMHMM(_BaseHMM):
             self.covars_weight = np.broadcast_to(
                 self.covars_weight, (self.n_components, self.n_mix)).copy()
 
-    def _check_parameters(self):
-        super(GMMHMM, self)._check_parameters()
+    def _sanitize_parameters(self):
+        super(GMMHMM, self)._sanitize_parameters()
 
         if not hasattr(self, "n_features"):
             self.n_features = self.means_.shape[2]
 
-        self._init_covar_priors()
-        self._fix_priors_shape()
+        self.weights_ = np.array(self.weights_)
+        self.means_ = np.array(self.means_)
+        self.covars_ = np.array(self.covars_)
+
+    def _check_parameters(self):
+        super(GMMHMM, self)._check_parameters()
 
         # Checking covariance type
         if self.covariance_type not in COVARIANCE_TYPES:
             raise ValueError("covariance_type must be one of {0}"
                              .format(COVARIANCE_TYPES))
 
-        self.weights_ = np.array(self.weights_)
         # Checking mixture weights' shape
         if self.weights_.shape != (self.n_components, self.n_mix):
             raise ValueError("mixture weights must have shape "
@@ -725,7 +731,6 @@ class GMMHMM(_BaseHMM):
             raise ValueError("mixture weights must sum up to 1")
 
         # Checking means' shape
-        self.means_ = np.array(self.means_)
         if self.means_.shape != (self.n_components, self.n_mix,
                                  self.n_features):
             raise ValueError("mixture means must have shape "
@@ -733,7 +738,6 @@ class GMMHMM(_BaseHMM):
                              "actual shape: {0}".format(self.means_.shape))
 
         # Checking covariances' shape
-        self.covars_ = np.array(self.covars_)
         covars_shape = self.covars_.shape
         needed_shapes = {
             "spherical": (self.n_components, self.n_mix),

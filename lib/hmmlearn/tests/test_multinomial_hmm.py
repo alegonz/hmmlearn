@@ -63,11 +63,13 @@ class TestMultinomailHMM(object):
     def test_attributes(self):
         with pytest.raises(ValueError):
             self.h.emissionprob_ = []
+            self.h._sanitize_parameters()
             self.h._check_parameters()
 
         with pytest.raises(ValueError):
             self.h.emissionprob_ = np.zeros((self.n_components - 2,
                                              self.n_features))
+            self.h._sanitize_parameters()
             self.h._check_parameters()
 
     def test_score_samples(self):

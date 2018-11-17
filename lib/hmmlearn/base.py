@@ -228,6 +228,7 @@ class _BaseHMM(BaseEstimator):
         decode : Find most likely state sequence corresponding to ``X``.
         """
         check_is_fitted(self, "startprob_")
+        self._sanitize_parameters()
         self._check_parameters()
 
         X = check_array(X)
@@ -267,6 +268,7 @@ class _BaseHMM(BaseEstimator):
         decode : Find most likely state sequence corresponding to ``X``.
         """
         check_is_fitted(self, "startprob_")
+        self._sanitize_parameters()
         self._check_parameters()
 
         X = check_array(X)
@@ -320,6 +322,7 @@ class _BaseHMM(BaseEstimator):
         score : Compute the log probability under the model.
         """
         check_is_fitted(self, "startprob_")
+        self._sanitize_parameters()
         self._check_parameters()
 
         algorithm = algorithm or self.algorithm
@@ -402,6 +405,7 @@ class _BaseHMM(BaseEstimator):
             State sequence produced by the model.
         """
         check_is_fitted(self, "startprob_")
+        self._sanitize_parameters()
         self._check_parameters()
 
         if random_state is None:
@@ -530,6 +534,12 @@ class _BaseHMM(BaseEstimator):
             self.transmat_ = np.full((self.n_components, self.n_components),
                                      init)
 
+    def _sanitize_parameters(self):
+        """Sanitizes model parameters prior to fitting.
+        """
+        self.startprob_ = np.asarray(self.startprob_)
+        self.transmat_ = np.asarray(self.transmat_)
+
     def _check_parameters(self):
         """Checks model parameters prior to fitting.
 
@@ -540,14 +550,12 @@ class _BaseHMM(BaseEstimator):
             If any of the parameters are invalid, e.g. if :attr:`startprob_`
             don't sum to 1.
         """
-        self.startprob_ = np.asarray(self.startprob_)
         if len(self.startprob_) != self.n_components:
             raise ValueError("startprob_ must have length n_components")
         if not np.allclose(self.startprob_.sum(), 1.0):
             raise ValueError("startprob_ must sum to 1.0 (got {0:.4f})"
                              .format(self.startprob_.sum()))
 
-        self.transmat_ = np.asarray(self.transmat_)
         if self.transmat_.shape != (self.n_components, self.n_components):
             raise ValueError(
                 "transmat_ must have shape (n_components, n_components)")
