@@ -39,8 +39,10 @@ class GMMHMMTestMixin(object):
                 self.n_mix, self.n_features, self.covariance_type,
                 prng=self.prng))
 
-    def test_score_samples_and_decode(self):
-        h = hmm.GMMHMM(self.n_components, covariance_type=self.covariance_type)
+    @pytest.mark.parametrize('skip_parameter_checks', [False, True])
+    def test_score_samples_and_decode(self, skip_parameter_checks):
+        h = hmm.GMMHMM(self.n_components, covariance_type=self.covariance_type,
+                       skip_parameter_checks=skip_parameter_checks)
         h.startprob_ = self.startprob
         h.transmat_ = self.transmat
         h.gmms_ = self.gmms
@@ -62,8 +64,10 @@ class GMMHMMTestMixin(object):
         _logprob, stateseq = h.decode(X)
         assert np.allclose(stateseq, refstateseq)
 
-    def test_sample(self, n_samples=1000):
-        h = hmm.GMMHMM(self.n_components, covariance_type=self.covariance_type)
+    @pytest.mark.parametrize('skip_parameter_checks', [False, True])
+    def test_sample(self, skip_parameter_checks, n_samples=1000):
+        h = hmm.GMMHMM(self.n_components, covariance_type=self.covariance_type,
+                       skip_parameter_checks=skip_parameter_checks)
         h.startprob_ = self.startprob
         h.transmat_ = self.transmat
         h.gmms_ = self.gmms

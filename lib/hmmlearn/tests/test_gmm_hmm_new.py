@@ -95,8 +95,10 @@ class GMMHMMTestMixin(object):
         self.h._sanitize_parameters()
         self.h._check_parameters()  # should not raise any errors
 
-    def test_sample(self):
+    @pytest.mark.parametrize('skip_parameter_checks', [False, True])
+    def test_sample(self, skip_parameter_checks):
         n_samples = 1000
+        self.h.skip_parameter_checks = skip_parameter_checks
         X, states = self.h.sample(n_samples)
         assert (n_samples, self.n_features) == X.shape
         assert n_samples == len(states)
@@ -108,8 +110,11 @@ class GMMHMMTestMixin(object):
         self.h._sanitize_parameters()
         self.h._check_parameters()  # should not raise any errors
 
-    def test_score_samples_and_decode(self):
+    @pytest.mark.parametrize('skip_parameter_checks', [False, True])
+    def test_score_samples_and_decode(self, skip_parameter_checks):
         n_samples = 1000
+        self.h.skip_parameter_checks = skip_parameter_checks
+
         X, states = self.h.sample(n_samples)
 
         _ll, posteriors = self.h.score_samples(X)

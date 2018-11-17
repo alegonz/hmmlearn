@@ -35,9 +35,11 @@ class GaussianHMMTestMixin(object):
             h._sanitize_parameters()
             h._check_parameters()
 
-    def test_score_samples_and_decode(self):
+    @pytest.mark.parametrize('skip_parameter_checks', [False, True])
+    def test_score_samples_and_decode(self, skip_parameter_checks):
         h = hmm.GaussianHMM(self.n_components, self.covariance_type,
-                            init_params="st")
+                            init_params="st",
+                            skip_parameter_checks=skip_parameter_checks)
         h.means_ = self.means
         h.covars_ = self.covars
 
@@ -57,8 +59,10 @@ class GaussianHMMTestMixin(object):
         viterbi_ll, stateseq = h.decode(X)
         assert np.allclose(stateseq, gaussidx)
 
-    def test_sample(self, n=1000):
-        h = hmm.GaussianHMM(self.n_components, self.covariance_type)
+    @pytest.mark.parametrize('skip_parameter_checks', [False, True])
+    def test_sample(self, skip_parameter_checks, n_samples=1000):
+        h = hmm.GaussianHMM(self.n_components, self.covariance_type,
+                            skip_parameter_checks=skip_parameter_checks)
         h.startprob_ = self.startprob
         h.transmat_ = self.transmat
         # Make sure the means are far apart so posteriors.argmax()
@@ -66,9 +70,9 @@ class GaussianHMMTestMixin(object):
         h.means_ = 20 * self.means
         h.covars_ = np.maximum(self.covars, 0.1)
 
-        X, state_sequence = h.sample(n, random_state=self.prng)
-        assert (n, self.n_features) == X.shape
-        assert n == len(state_sequence)
+        X, state_sequence = h.sample(n_samples, random_state=self.prng)
+        assert (n_samples, self.n_features) == X.shape
+        assert n_samples == len(state_sequence)
 
     def test_fit(self, params='stmc', n_iter=5, **kwargs):
         h = hmm.GaussianHMM(self.n_components, self.covariance_type)
