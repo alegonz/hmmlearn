@@ -228,7 +228,7 @@ class _BaseHMM(BaseEstimator):
         decode : Find most likely state sequence corresponding to ``X``.
         """
         check_is_fitted(self, "startprob_")
-        self._check()
+        self._check_parameters()
 
         X = check_array(X)
         n_samples = X.shape[0]
@@ -267,7 +267,7 @@ class _BaseHMM(BaseEstimator):
         decode : Find most likely state sequence corresponding to ``X``.
         """
         check_is_fitted(self, "startprob_")
-        self._check()
+        self._check_parameters()
 
         X = check_array(X)
         # XXX we can unroll forward pass for speed and memory efficiency.
@@ -320,7 +320,7 @@ class _BaseHMM(BaseEstimator):
         score : Compute the log probability under the model.
         """
         check_is_fitted(self, "startprob_")
-        self._check()
+        self._check_parameters()
 
         algorithm = algorithm or self.algorithm
         if algorithm not in DECODER_ALGORITHMS:
@@ -402,7 +402,7 @@ class _BaseHMM(BaseEstimator):
             State sequence produced by the model.
         """
         check_is_fitted(self, "startprob_")
-        self._check()
+        self._check_parameters()
 
         if random_state is None:
             random_state = self.random_state
@@ -449,7 +449,7 @@ class _BaseHMM(BaseEstimator):
         """
         X = check_array(X)
         self._init(X, lengths=lengths)
-        self._check()
+        self._check_parameters()
 
         self.monitor_._reset()
         for iter in range(self.n_iter):
@@ -530,8 +530,8 @@ class _BaseHMM(BaseEstimator):
             self.transmat_ = np.full((self.n_components, self.n_components),
                                      init)
 
-    def _check(self):
-        """Validates model parameters prior to fitting.
+    def _check_parameters(self):
+        """Checks model parameters prior to fitting.
 
         Raises
         ------

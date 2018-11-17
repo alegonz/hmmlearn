@@ -167,8 +167,8 @@ class GaussianHMM(_BaseHMM):
     def covars_(self, covars):
         self._covars_ = np.asarray(covars).copy()
 
-    def _check(self):
-        super(GaussianHMM, self)._check()
+    def _check_parameters(self):
+        super(GaussianHMM, self)._check_parameters()
 
         self.means_ = np.asarray(self.means_)
         self.n_features = self.means_.shape[1]
@@ -397,8 +397,8 @@ class MultinomialHMM(_BaseHMM):
                 .rand(self.n_components, self.n_features)
             normalize(self.emissionprob_, axis=1)
 
-    def _check(self):
-        super(MultinomialHMM, self)._check()
+    def _check_parameters(self):
+        super(MultinomialHMM, self)._check_parameters()
 
         self.emissionprob_ = np.atleast_2d(self.emissionprob_)
         n_features = getattr(self, "n_features", self.emissionprob_.shape[1])
@@ -698,8 +698,8 @@ class GMMHMM(_BaseHMM):
             self.covars_weight = np.broadcast_to(
                 self.covars_weight, (self.n_components, self.n_mix)).copy()
 
-    def _check(self):
-        super(GMMHMM, self)._check()
+    def _check_parameters(self):
+        super(GMMHMM, self)._check_parameters()
 
         if not hasattr(self, "n_features"):
             self.n_features = self.means_.shape[2]

@@ -88,10 +88,10 @@ class GMMHMMTestMixin(object):
     def test_check_bad_covariance_type(self):
         with pytest.raises(ValueError):
             self.h.covariance_type = "bad_covariance_type"
-            self.h._check()
+            self.h._check_parameters()
 
     def test_check_good_covariance_type(self):
-        self.h._check()  # should not raise any errors
+        self.h._check_parameters()  # should not raise any errors
 
     def test_sample(self):
         n_samples = 1000
@@ -103,7 +103,7 @@ class GMMHMMTestMixin(object):
         n_samples = 1000
         X, _states = self.h.sample(n_samples)
         self.h._init(X)
-        self.h._check()  # should not raise any errors
+        self.h._check_parameters()  # should not raise any errors
 
     def test_score_samples_and_decode(self):
         n_samples = 1000
