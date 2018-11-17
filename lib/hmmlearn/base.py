@@ -160,6 +160,13 @@ class _BaseHMM(BaseEstimator):
         to :data:`sys.stderr`. You can diagnose convergence via the
         :attr:`monitor_` attribute.
 
+    skip_parameter_checks: bool, optional
+        When ``False``, parameter checks (e.g. if :attr:`startprob_`
+        don't sum to 1.) are performed prior to scoring, predicting,
+        sampling and decoding. Setting it to ``True`` skips the checks
+        and avoids their associated computation costs. Note that checks are
+        always done prior to fitting regardless of this option.
+
     params : string, optional
         Controls which parameters are updated in the training
         process.  Can contain any combination of 's' for startprob,
@@ -188,6 +195,7 @@ class _BaseHMM(BaseEstimator):
                  startprob_prior=1.0, transmat_prior=1.0,
                  algorithm="viterbi", random_state=None,
                  n_iter=10, tol=1e-2, verbose=False,
+                 skip_parameter_checks=False,
                  params=string.ascii_letters,
                  init_params=string.ascii_letters):
         self.n_components = n_components
@@ -200,6 +208,7 @@ class _BaseHMM(BaseEstimator):
         self.n_iter = n_iter
         self.tol = tol
         self.verbose = verbose
+        self.skip_parameter_checks = skip_parameter_checks
         self.monitor_ = ConvergenceMonitor(self.tol, self.n_iter, self.verbose)
 
     def score_samples(self, X, lengths=None):
@@ -229,7 +238,9 @@ class _BaseHMM(BaseEstimator):
         """
         check_is_fitted(self, "startprob_")
         self._sanitize_parameters()
-        self._check_parameters()
+
+        if not self.skip_parameter_checks:
+            self._check_parameters()
 
         X = check_array(X)
         n_samples = X.shape[0]
@@ -269,7 +280,9 @@ class _BaseHMM(BaseEstimator):
         """
         check_is_fitted(self, "startprob_")
         self._sanitize_parameters()
-        self._check_parameters()
+
+        if not self.skip_parameter_checks:
+            self._check_parameters()
 
         X = check_array(X)
         # XXX we can unroll forward pass for speed and memory efficiency.
@@ -323,7 +336,9 @@ class _BaseHMM(BaseEstimator):
         """
         check_is_fitted(self, "startprob_")
         self._sanitize_parameters()
-        self._check_parameters()
+
+        if not self.skip_parameter_checks:
+            self._check_parameters()
 
         algorithm = algorithm or self.algorithm
         if algorithm not in DECODER_ALGORITHMS:
@@ -406,7 +421,9 @@ class _BaseHMM(BaseEstimator):
         """
         check_is_fitted(self, "startprob_")
         self._sanitize_parameters()
-        self._check_parameters()
+
+        if not self.skip_parameter_checks:
+            self._check_parameters()
 
         if random_state is None:
             random_state = self.random_state

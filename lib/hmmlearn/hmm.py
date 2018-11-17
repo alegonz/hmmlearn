@@ -89,6 +89,13 @@ class GaussianHMM(_BaseHMM):
         to :data:`sys.stderr`. You can diagnose convergence via the
         :attr:`monitor_` attribute.
 
+    skip_parameter_checks: bool, optional
+        When ``False``, parameter checks (e.g. if :attr:`startprob_`
+        don't sum to 1.) are performed prior to scoring, predicting,
+        sampling and decoding. Setting it to ``True`` skips the checks
+        and avoids their associated computation costs. Note that checks are
+        always done prior to fitting regardless of this option.
+
     params : string, optional
         Controls which parameters are updated in the training
         process.  Can contain any combination of 's' for startprob,
@@ -142,13 +149,15 @@ class GaussianHMM(_BaseHMM):
                  covars_prior=1e-2, covars_weight=1,
                  algorithm="viterbi", random_state=None,
                  n_iter=10, tol=1e-2, verbose=False,
+                 skip_parameter_checks=False,
                  params="stmc", init_params="stmc"):
         _BaseHMM.__init__(self, n_components,
                           startprob_prior=startprob_prior,
                           transmat_prior=transmat_prior, algorithm=algorithm,
                           random_state=random_state, n_iter=n_iter,
-                          tol=tol, params=params, verbose=verbose,
-                          init_params=init_params)
+                          tol=tol, verbose=verbose,
+                          skip_parameter_checks=skip_parameter_checks,
+                          params=params, init_params=init_params)
 
         self.covariance_type = covariance_type
         self.min_covar = min_covar
@@ -331,6 +340,13 @@ class MultinomialHMM(_BaseHMM):
         to :data:`sys.stderr`. You can diagnose convergence via the
         :attr:`monitor_` attribute.
 
+    skip_parameter_checks: bool, optional
+        When ``False``, parameter checks (e.g. if :attr:`startprob_`
+        don't sum to 1.) are performed prior to scoring, predicting,
+        sampling and decoding. Setting it to ``True`` skips the checks
+        and avoids their associated computation costs. Note that checks are
+        always done prior to fitting regardless of this option.
+
     params : string, optional
         Controls which parameters are updated in the training
         process.  Can contain any combination of 's' for startprob,
@@ -372,6 +388,7 @@ class MultinomialHMM(_BaseHMM):
                  startprob_prior=1.0, transmat_prior=1.0,
                  algorithm="viterbi", random_state=None,
                  n_iter=10, tol=1e-2, verbose=False,
+                 skip_parameter_checks=False,
                  params="ste", init_params="ste"):
         _BaseHMM.__init__(self, n_components,
                           startprob_prior=startprob_prior,
@@ -379,6 +396,7 @@ class MultinomialHMM(_BaseHMM):
                           algorithm=algorithm,
                           random_state=random_state,
                           n_iter=n_iter, tol=tol, verbose=verbose,
+                          skip_parameter_checks=skip_parameter_checks,
                           params=params, init_params=init_params)
 
     def _init(self, X, lengths=None):
@@ -528,6 +546,13 @@ class GMMHMM(_BaseHMM):
         to :data:`sys.stderr`. You can diagnose convergence via the
         :attr:`monitor_` attribute.
 
+    skip_parameter_checks: bool, optional
+        When ``False``, parameter checks (e.g. if :attr:`startprob_`
+        don't sum to 1.) are performed prior to scoring, predicting,
+        sampling and decoding. Setting it to ``True`` skips the checks
+        and avoids their associated computation costs. Note that checks are
+        always done prior to fitting regardless of this option.
+
     init_params : string, optional
         Controls which parameters are initialized prior to training. Can
         contain any combination of 's' for startprob, 't' for transmat, 'm'
@@ -574,6 +599,7 @@ class GMMHMM(_BaseHMM):
                  covars_prior=None, covars_weight=None,
                  algorithm="viterbi", covariance_type="diag",
                  random_state=None, n_iter=10, tol=1e-2,
+                 skip_parameter_checks=False,
                  verbose=False, params="stmcw",
                  init_params="stmcw"):
         _BaseHMM.__init__(self, n_components,
@@ -581,6 +607,7 @@ class GMMHMM(_BaseHMM):
                           transmat_prior=transmat_prior,
                           algorithm=algorithm, random_state=random_state,
                           n_iter=n_iter, tol=tol, verbose=verbose,
+                          skip_parameter_checks=skip_parameter_checks,
                           params=params, init_params=init_params)
         self.covariance_type = covariance_type
         self.min_covar = min_covar
