@@ -31,7 +31,7 @@ class TestMultinomialAgainstWikipedia(object):
         #  with probability 0.01344."
         X = [[0], [1], [2]]
         logprob, state_sequence = self.h.decode(X, algorithm="viterbi")
-        assert round(np.exp(logprob), 5) == 0.01344
+        assert 0.01344 == round(np.exp(logprob), 5)
         assert np.allclose(state_sequence, [1, 0, 0])
 
     def test_decode_map(self):
@@ -76,14 +76,14 @@ class TestMultinomailHMM(object):
         X = np.random.randint(self.n_features, size=(n_samples, 1))
 
         ll, posteriors = self.h.score_samples(X)
-        assert posteriors.shape == (n_samples, self.n_components)
+        assert (n_samples, self.n_components) == posteriors.shape
         assert np.allclose(posteriors.sum(axis=1), np.ones(n_samples))
 
     def test_sample(self, n_samples=1000):
         X, state_sequence = self.h.sample(n_samples)
-        assert X.ndim == 2
-        assert len(X) == len(state_sequence) == n_samples
-        assert len(np.unique(X)) == self.n_features
+        assert 2 == X.ndim
+        assert n_samples == len(X) == len(state_sequence)
+        assert self.n_features == len(np.unique(X))
 
     def test_fit(self, params='ste', n_iter=5):
         h = self.h

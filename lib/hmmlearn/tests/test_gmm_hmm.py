@@ -11,6 +11,7 @@ from . import log_likelihood_increasing, make_covar_matrix, normalized
 
 pytestmark = pytest.mark.xfail()
 
+
 def create_random_gmm(n_mix, n_features, covariance_type, prng=0):
     prng = check_random_state(prng)
     g = GaussianMixture(n_mix, covariance_type=covariance_type)
@@ -55,7 +56,7 @@ class GMMHMMTestMixin(object):
 
         _ll, posteriors = h.score_samples(X)
 
-        assert posteriors.shape == (n_samples, self.n_components)
+        assert (n_samples, self.n_components) == posteriors.shape
         assert np.allclose(posteriors.sum(axis=1), np.ones(n_samples))
 
         _logprob, stateseq = h.decode(X)
@@ -67,8 +68,8 @@ class GMMHMMTestMixin(object):
         h.transmat_ = self.transmat
         h.gmms_ = self.gmms
         X, state_sequence = h.sample(n_samples)
-        assert X.shape == (n_samples, self.n_features)
-        assert len(state_sequence) == n_samples
+        assert (n_samples, self.n_features) == X.shape
+        assert n_samples == len(state_sequence)
 
     @pytest.mark.parametrize("params", ["stmwc", "wt", "m"])
     def test_fit(self, params, n_iter=5):

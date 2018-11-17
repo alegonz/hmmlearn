@@ -96,8 +96,8 @@ class GMMHMMTestMixin(object):
     def test_sample(self):
         n_samples = 1000
         X, states = self.h.sample(n_samples)
-        assert X.shape == (n_samples, self.n_features)
-        assert len(states) == n_samples
+        assert (n_samples, self.n_features) == X.shape
+        assert n_samples == len(states)
 
     def test_init(self):
         n_samples = 1000
