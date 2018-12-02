@@ -18,7 +18,8 @@ from sklearn.utils import check_random_state
 from . import _utils
 from .stats import log_multivariate_normal_density
 from .base import _BaseHMM
-from .utils import iter_from_X_lengths, normalize, fill_covars
+from .utils import iter_from_X_lengths, normalize
+from ._utils import fill_covars
 
 __all__ = ["GMMHMM", "GaussianHMM", "MultinomialHMM"]
 

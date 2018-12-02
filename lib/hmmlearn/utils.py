@@ -77,16 +77,3 @@ def log_mask_zero(a):
     a = np.asarray(a)
     with np.errstate(divide="ignore"):
         return np.log(a)
-
-
-def fill_covars(covars, covariance_type='full', n_components=1, n_features=1):
-    if covariance_type == 'full':
-        return covars
-    elif covariance_type == 'diag':
-        return np.array(list(map(np.diag, covars)))
-    elif covariance_type == 'tied':
-        return np.tile(covars, (n_components, 1, 1))
-    elif covariance_type == 'spherical':
-        eye = np.eye(n_features)[np.newaxis, :, :]
-        covars = covars[:, np.newaxis, np.newaxis]
-        return eye * covars

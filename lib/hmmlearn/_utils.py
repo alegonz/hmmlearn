@@ -59,3 +59,17 @@ def distribute_covar_matrix_to_match_covariance_type(
         raise ValueError("covariance_type must be one of " +
                          "'spherical', 'tied', 'diag', 'full'")
     return cv
+
+
+def fill_covars(covars, covariance_type='full', n_components=1, n_features=1):
+    """Creates a full covariance matrix from its simplified representation"""
+    if covariance_type == 'full':
+        return covars
+    elif covariance_type == 'diag':
+        return np.array(list(map(np.diag, covars)))
+    elif covariance_type == 'tied':
+        return np.tile(covars, (n_components, 1, 1))
+    elif covariance_type == 'spherical':
+        eye = np.eye(n_features)[np.newaxis, :, :]
+        covars = covars[:, np.newaxis, np.newaxis]
+        return eye * covars
